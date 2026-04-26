@@ -44,6 +44,24 @@ impl TreeNode {
             subtree_size: 0,
         }
     }
+
+    /// preorder traversal で id を採番し、bottom-up で subtree_size を確定する。
+    /// 構築完了後に 1 度だけ呼ぶ。
+    pub fn finalize(&mut self) {
+        let mut next_id: u32 = 0;
+        Self::finalize_recurse(self, &mut next_id);
+    }
+
+    fn finalize_recurse(node: &mut TreeNode, next_id: &mut u32) {
+        node.id = *next_id;
+        *next_id += 1;
+        let mut size: u32 = 1;
+        for child in &mut node.children {
+            Self::finalize_recurse(child, next_id);
+            size += child.subtree_size;
+        }
+        node.subtree_size = size;
+    }
 }
 
 #[cfg(test)]
@@ -80,5 +98,39 @@ mod tests {
         let branch = TreeNode::branch(NodeKind::Block, vec![leaf]);
         assert_eq!(branch.children.len(), 1);
         assert_eq!(branch.children[0].kind, NodeKind::Identifier);
+    }
+
+    #[test]
+    fn finalize_assigns_preorder_ids() {
+        // tree:
+        //     Block (id=0, size=3)
+        //     ├── Identifier (id=1, size=1)
+        //     └── Identifier (id=2, size=1)
+        let leaf1 = TreeNode::leaf(NodeKind::Identifier, Some("a".into()));
+        let leaf2 = TreeNode::leaf(NodeKind::Identifier, Some("b".into()));
+        let mut root = TreeNode::branch(NodeKind::Block, vec![leaf1, leaf2]);
+        root.finalize();
+        assert_eq!(root.id, 0);
+        assert_eq!(root.subtree_size, 3);
+        assert_eq!(root.children[0].id, 1);
+        assert_eq!(root.children[0].subtree_size, 1);
+        assert_eq!(root.children[1].id, 2);
+        assert_eq!(root.children[1].subtree_size, 1);
+    }
+
+    #[test]
+    fn finalize_handles_nested_subtrees() {
+        // tree:
+        //     Block (id=0, size=4)
+        //     └── Block (id=1, size=3)
+        //         ├── Identifier (id=2, size=1)
+        //         └── Identifier (id=3, size=1)
+        let leaf1 = TreeNode::leaf(NodeKind::Identifier, None);
+        let leaf2 = TreeNode::leaf(NodeKind::Identifier, None);
+        let inner = TreeNode::branch(NodeKind::Block, vec![leaf1, leaf2]);
+        let mut root = TreeNode::branch(NodeKind::Block, vec![inner]);
+        root.finalize();
+        assert_eq!(root.subtree_size, 4);
+        assert_eq!(root.children[0].subtree_size, 3);
     }
 }
