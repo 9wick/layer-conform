@@ -10,9 +10,9 @@ mod signature;
 use lc_core::FunctionRef;
 
 /// Parse a TS/JS source string and return all extractable functions.
-/// MVP supports only `FunctionDeclaration`.
+/// Returns top-level FunctionDeclarations and class methods.
 pub fn parse_file(source: &str) -> Vec<FunctionRef> {
-    extract::extract_function_declarations(source)
+    extract::extract_all_functions(source)
 }
 
 #[cfg(test)]

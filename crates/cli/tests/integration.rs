@@ -85,3 +85,59 @@ fn check_fails_when_symbol_not_found() {
         .assert()
         .failure();
 }
+
+#[test]
+fn check_handles_class_methods_with_dotted_symbols() {
+    let dir = tempdir().unwrap();
+    let file = dir.path().join("resolver.ts");
+    write(
+        &file,
+        r#"class FooResolver {
+  async list() { return this.svc.findAll(); }
+  async one() { return this.svc.findFirst(); }
+}
+"#,
+    );
+
+    Command::cargo_bin("layer-conform")
+        .unwrap()
+        .args([
+            "check",
+            "--file",
+            file.to_str().unwrap(),
+            "--symbol",
+            "FooResolver.list",
+            "--golden",
+        ])
+        .arg(format!("{}:FooResolver.one", file.display()))
+        .assert()
+        .success()
+        .stdout(contains("FooResolver.list"))
+        .stdout(contains("FooResolver.one"));
+}
+
+#[test]
+fn check_walker_collects_calls_inside_variable_decl() {
+    let dir = tempdir().unwrap();
+    let file = dir.path().join("a.ts");
+    write(
+        &file,
+        "function f() { const x = useSWR('/u'); return x; }\n",
+    );
+
+    Command::cargo_bin("layer-conform")
+        .unwrap()
+        .args([
+            "check",
+            "--file",
+            file.to_str().unwrap(),
+            "--symbol",
+            "f",
+            "--golden",
+        ])
+        .arg(format!("{}:f", file.display()))
+        .assert()
+        .success()
+        // self-compare → all 1.000
+        .stdout(contains("calls=1.000"));
+}
