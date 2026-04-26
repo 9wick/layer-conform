@@ -60,7 +60,7 @@ pub fn jaccard_sorted(a: &[CompactString], b: &[CompactString]) -> f64 {
     intersect as f64 / union_n as f64
 }
 
-/// Build a SimilarityScore from per-axis values and weights.
+/// Build a `SimilarityScore` from per-axis values and weights.
 pub fn aggregate(
     shape: f64,
     calls: f64,

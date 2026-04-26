@@ -10,6 +10,7 @@ compact_str.workspace = true
 smallvec.workspace = true
 blake3.workspace = true
 thiserror.workspace = true
+globset.workspace = true
 
 [lints]
 workspace = true

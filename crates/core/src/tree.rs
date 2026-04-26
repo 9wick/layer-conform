@@ -45,7 +45,7 @@ impl TreeNode {
         }
     }
 
-    /// preorder traversal で id を採番し、bottom-up で subtree_size を確定する。
+    /// preorder traversal で id を採番し、bottom-up で `subtree_size` を確定する。
     /// 構築完了後に 1 度だけ呼ぶ。
     pub fn finalize(&mut self) {
         let mut next_id: u32 = 0;
@@ -65,7 +65,7 @@ impl TreeNode {
 
     /// blake3(canonical bytes) を返す。
     /// フォーマット: kind(u32 LE) | value 長(u32 LE) | value bytes | children 数(u32 LE) | 子を再帰
-    /// id / subtree_size は入力に含めない (構築順で変動するため)。
+    /// id / `subtree_size` は入力に含めない (構築順で変動するため)。
     pub fn canonical_hash(&self) -> [u8; 32] {
         let mut hasher = blake3::Hasher::new();
         Self::write_canonical(self, &mut hasher);
