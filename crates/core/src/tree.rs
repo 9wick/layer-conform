@@ -62,6 +62,27 @@ impl TreeNode {
         }
         node.subtree_size = size;
     }
+
+    /// blake3(canonical bytes) を返す。
+    /// フォーマット: kind(u32 LE) | value 長(u32 LE) | value bytes | children 数(u32 LE) | 子を再帰
+    /// id / subtree_size は入力に含めない (構築順で変動するため)。
+    pub fn canonical_hash(&self) -> [u8; 32] {
+        let mut hasher = blake3::Hasher::new();
+        Self::write_canonical(self, &mut hasher);
+        *hasher.finalize().as_bytes()
+    }
+
+    fn write_canonical(node: &TreeNode, hasher: &mut blake3::Hasher) {
+        hasher.update(&(node.kind as u32).to_le_bytes());
+        let v = node.value.as_deref().unwrap_or("");
+        let v_bytes = v.as_bytes();
+        hasher.update(&(v_bytes.len() as u32).to_le_bytes());
+        hasher.update(v_bytes);
+        hasher.update(&(node.children.len() as u32).to_le_bytes());
+        for child in &node.children {
+            Self::write_canonical(child, hasher);
+        }
+    }
 }
 
 #[cfg(test)]
@@ -132,5 +153,48 @@ mod tests {
         root.finalize();
         assert_eq!(root.subtree_size, 4);
         assert_eq!(root.children[0].subtree_size, 3);
+    }
+
+    #[test]
+    fn canonical_hash_is_deterministic() {
+        let mut tree = TreeNode::branch(
+            NodeKind::Block,
+            vec![TreeNode::leaf(NodeKind::Identifier, Some("x".into()))],
+        );
+        tree.finalize();
+        let h1 = tree.canonical_hash();
+        let h2 = tree.canonical_hash();
+        assert_eq!(h1, h2);
+    }
+
+    #[test]
+    fn canonical_hash_differs_for_different_kinds() {
+        let mut t1 = TreeNode::leaf(NodeKind::Identifier, Some("x".into()));
+        t1.finalize();
+        let mut t2 = TreeNode::leaf(NodeKind::Literal, Some("x".into()));
+        t2.finalize();
+        assert_ne!(t1.canonical_hash(), t2.canonical_hash());
+    }
+
+    #[test]
+    fn canonical_hash_differs_for_different_values() {
+        let mut t1 = TreeNode::leaf(NodeKind::Identifier, Some("x".into()));
+        t1.finalize();
+        let mut t2 = TreeNode::leaf(NodeKind::Identifier, Some("y".into()));
+        t2.finalize();
+        assert_ne!(t1.canonical_hash(), t2.canonical_hash());
+    }
+
+    #[test]
+    fn canonical_hash_ignores_id_and_size() {
+        // id と subtree_size は構築順で変わるが、ハッシュには影響しないことを確認。
+        let mut t1 = TreeNode::leaf(NodeKind::Identifier, Some("x".into()));
+        t1.id = 100;
+        t1.subtree_size = 999;
+        let h1 = t1.canonical_hash();
+        t1.id = 0;
+        t1.subtree_size = 1;
+        let h2 = t1.canonical_hash();
+        assert_eq!(h1, h2);
     }
 }
