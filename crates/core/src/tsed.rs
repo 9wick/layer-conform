@@ -1,7 +1,7 @@
 //! TSED — Type Structure Edit Distance score.
 //!
 //! Normalizes APTED distance to a 0..1 similarity:
-//!   score = max(0.0, 1.0 - distance / max(size_a, size_b))
+//!   score = max(0.0, 1.0 - distance / `max(size_a`, `size_b`))
 
 use crate::apted::{edit_distance, AptedOptions};
 use crate::tree::TreeNode;

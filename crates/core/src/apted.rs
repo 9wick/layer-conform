@@ -1,7 +1,7 @@
 //! APTED (All Path Tree Edit Distance) implementation.
 //!
 //! Memoized DP over `(node1.id, node2.id)` pairs. Identifier equality is
-//! decided by `(kind, value)` — id/subtree_size are ignored.
+//! decided by `(kind, value)` — `id/subtree_size` are ignored.
 
 use std::collections::HashMap;
 
@@ -21,7 +21,7 @@ impl Default for AptedOptions {
 }
 
 /// Compute tree edit distance between `a` and `b`.
-/// Both trees must have been finalized (id/subtree_size set).
+/// Both trees must have been finalized (`id/subtree_size` set).
 pub fn edit_distance(a: &TreeNode, b: &TreeNode, opts: AptedOptions) -> f64 {
     let mut memo: HashMap<(u32, u32), f64> = HashMap::new();
     distance_recurse(a, b, opts, &mut memo)

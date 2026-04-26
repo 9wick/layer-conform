@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "crates/core",
+    "crates/lc-io",
     "crates/lc-ts",
     "crates/cli",
 ]
@@ -15,6 +16,7 @@ rust-version = "1.82"
 [workspace.dependencies]
 # Internal crates
 lc-core = { path = "crates/core" }
+lc-io = { path = "crates/lc-io" }
 lc-ts = { path = "crates/lc-ts" }
 
 # External (exact pin で固定)
@@ -31,6 +33,9 @@ thiserror = "=2.0.6"
 compact_str = { version = "=0.8.1", features = ["serde"] }
 smallvec = { version = "=1.13.2", features = ["serde", "union"] }
 blake3 = "=1.5.5"
+globset = "=0.4.15"
+ignore = "=0.4.23"
+walkdir = "=2.5.0"
 
 # Dev
 assert_cmd = "=2.0.16"

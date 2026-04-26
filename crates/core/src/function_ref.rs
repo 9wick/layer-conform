@@ -2,6 +2,7 @@
 
 use compact_str::CompactString;
 
+use crate::ignore_parse::IgnoreDirective;
 use crate::tree::TreeNode;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -31,4 +32,7 @@ pub struct FunctionRef {
     pub calls: Vec<CompactString>,
     pub imports: Vec<CompactString>,
     pub ast_hash: [u8; 32],
+    /// `Some` when a `layer-conform-ignore` directive precedes the function.
+    /// Pipeline must skip ignored functions when detecting deviations.
+    pub ignore: Option<IgnoreDirective>,
 }

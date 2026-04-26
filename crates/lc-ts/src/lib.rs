@@ -1,6 +1,6 @@
 //! TypeScript / JavaScript adapter for layer-conform.
 //!
-//! Wraps oxc_parser and converts oxc AST into the neutral `lc_core::TreeNode` IR.
+//! Wraps `oxc_parser` and converts oxc AST into the neutral `lc_core::TreeNode` IR.
 
 mod extract;
 mod normalize;
@@ -10,7 +10,7 @@ mod signature;
 use lc_core::FunctionRef;
 
 /// Parse a TS/JS source string and return all extractable functions.
-/// Returns top-level FunctionDeclarations and class methods.
+/// Returns top-level `FunctionDeclarations` and class methods.
 pub fn parse_file(source: &str) -> Vec<FunctionRef> {
     extract::extract_all_functions(source)
 }
