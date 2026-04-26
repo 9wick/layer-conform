@@ -3,11 +3,6 @@
 use compact_str::CompactString;
 use oxc_ast::ast::{Expression, ImportDeclarationSpecifier, Program, Statement};
 
-#[derive(Clone, Debug, Default, PartialEq)]
-pub struct Signature {
-    pub param_count: u32,
-}
-
 /// Walk a function body and collect callee names.
 /// Returns a sorted, deduplicated `Vec<CompactString>`.
 pub fn collect_calls(body: &[Statement<'_>]) -> Vec<CompactString> {
