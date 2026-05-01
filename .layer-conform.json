@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "cli-commands",
+      "golden": "crates/cli/src/commands/check.rs:run",
+      "applyTo": "crates/cli/src/commands/*.rs",
+      "threshold": 0.7
+    }
+  ]
+}
