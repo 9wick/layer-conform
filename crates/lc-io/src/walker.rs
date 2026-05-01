@@ -7,9 +7,9 @@ use std::path::{Path, PathBuf};
 
 use ignore::WalkBuilder;
 
-const SOURCE_EXTENSIONS: &[&str] = &["ts", "tsx", "js", "jsx", "mjs", "cjs"];
+const SOURCE_EXTENSIONS: &[&str] = &["ts", "tsx", "js", "jsx", "mjs", "cjs", "rs"];
 
-/// Walk every TS/JS source file under `root`, skipping anything ignored by
+/// Walk every supported source file under `root`, skipping anything ignored by
 /// `.gitignore` / `.ignore` rules.
 pub fn walk_source_files(root: &Path) -> Vec<PathBuf> {
     WalkBuilder::new(root)

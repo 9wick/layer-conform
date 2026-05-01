@@ -1,9 +1,14 @@
 //! `layer-conform check`: drive the full pipeline from `.layer-conform.json`.
+//!
+//! Walks every file matched by each rule's `applyTo` glob, scores every
+//! function against its golden(s), and renders the resulting deviations as
+//! text or JSON. `--explain <FILE>` post-filters the output — the pipeline
+//! still ran globally so cross-rule overlap remains visible without it.
 
 use std::io::stdout;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use lc_core::pipeline;
 
 use crate::loader;
@@ -23,32 +28,33 @@ pub fn run(opts: CheckOpts) -> Result<i32> {
     let rules = loader::compile_rules(&cfg)?;
     let root = std::env::current_dir()?;
     let files = loader::extract_workspace(&root, &opts.paths)?;
-    let mut deviations = pipeline::detect_deviations(&rules, &files, opts.threshold)?;
+    let deviations = pipeline::detect_deviations(&rules, &files, opts.threshold)?;
+    let focus_file = resolve_focus_file(&opts.explain, &root, &files)?;
 
-    if let Some(explain_path) = &opts.explain {
-        let key = relativize(&root, explain_path);
-        deviations.retain(|d| d.file == key);
-    }
-
-    let exit = i32::from(!deviations.is_empty());
     let mut out = stdout().lock();
     if opts.json {
-        reporter::render_json(&mut out, &deviations)?;
+        reporter::render_json(&mut out, &deviations, focus_file.as_deref())?;
     } else {
         reporter::render_text(
             &mut out,
             &deviations,
-            reporter::TextOpts { no_color: opts.no_color },
+            reporter::TextOpts { no_color: opts.no_color, focus_file },
         )?;
     }
-    Ok(exit)
+    Ok(i32::from(!deviations.is_empty()))
 }
 
-fn relativize(root: &Path, path: &Path) -> String {
-    if path.is_absolute() {
-        path.strip_prefix(root).map_or_else(|_| path.to_string_lossy().into_owned(), |p| p.to_string_lossy().into_owned())
-    } else {
-        path.to_string_lossy().into_owned()
+fn resolve_focus_file(
+    explain: &Option<PathBuf>,
+    root: &std::path::Path,
+    files: &lc_core::pipeline::ExtractedFiles,
+) -> Result<Option<String>> {
+    let Some(explain_path) = explain else { return Ok(None) };
+    let key = loader::relativize(root, explain_path);
+    if !files.contains_key(&key) {
+        return Err(anyhow!(
+            "--explain target `{key}` was not walked; check `applyTo` globs in .layer-conform.json"
+        ));
     }
+    Ok(Some(key))
 }
-

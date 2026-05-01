@@ -3,15 +3,20 @@
 use std::io::Write;
 
 use lc_core::deviation::Deviation;
+use lc_core::explain::{WhyEntry, WhyReport};
 use serde::Serialize;
 
 const ANSI_RESET: &str = "\x1b[0m";
 const ANSI_RED: &str = "\x1b[31m";
 const ANSI_DIM: &str = "\x1b[2m";
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct TextOpts {
     pub no_color: bool,
+    /// When `Some`, only deviations whose `file` equals this key are shown.
+    /// `--explain <FILE>` plumbs this through; the pipeline still produced
+    /// the full list, we just narrow the print at the reporter boundary.
+    pub focus_file: Option<String>,
 }
 
 pub fn render_text(
@@ -25,12 +30,17 @@ pub fn render_text(
         (ANSI_RED, ANSI_DIM, ANSI_RESET)
     };
 
-    if deviations.is_empty() {
+    let visible: Vec<&Deviation> = match &opts.focus_file {
+        None => deviations.iter().collect(),
+        Some(f) => deviations.iter().filter(|d| &d.file == f).collect(),
+    };
+
+    if visible.is_empty() {
         writeln!(out, "No deviations.")?;
         return Ok(());
     }
 
-    for d in deviations {
+    for d in &visible {
         writeln!(
             out,
             "{red}DEVIATION{reset} {file}:{symbol} (rule `{rule}`)",
@@ -76,7 +86,7 @@ pub fn render_text(
             }
         }
     }
-    writeln!(out, "{} deviation(s).", deviations.len())?;
+    writeln!(out, "{} deviation(s).", visible.len())?;
     Ok(())
 }
 
@@ -132,11 +142,19 @@ struct JsonSummary {
     deviations: usize,
 }
 
-pub fn render_json(out: &mut impl Write, deviations: &[Deviation]) -> std::io::Result<()> {
+pub fn render_json(
+    out: &mut impl Write,
+    deviations: &[Deviation],
+    focus_file: Option<&str>,
+) -> std::io::Result<()> {
+    let visible: Vec<&Deviation> = match focus_file {
+        None => deviations.iter().collect(),
+        Some(f) => deviations.iter().filter(|d| d.file == f).collect(),
+    };
     let report = JsonReport {
         version: 1,
-        deviations: deviations.iter().map(json_deviation).collect(),
-        summary: JsonSummary { deviations: deviations.len() },
+        deviations: visible.iter().map(|d| json_deviation(d)).collect(),
+        summary: JsonSummary { deviations: visible.len() },
     };
     serde_json::to_writer_pretty(&mut *out, &report)
         .map_err(std::io::Error::other)?;
@@ -178,4 +196,118 @@ fn similarity(s: &lc_core::similarity::SimilarityScore) -> JsonSimilarity {
         imports: s.imports,
         signature: s.signature,
     }
+}
+
+pub fn render_why_text(
+    out: &mut impl Write,
+    report: &WhyReport,
+    opts: TextOpts,
+) -> std::io::Result<()> {
+    let (red, reset) = if opts.no_color { ("", "") } else { (ANSI_RED, ANSI_RESET) };
+
+    if report.entries.is_empty() {
+        writeln!(out, "{file}  →  no rule matches", file = report.file)?;
+        return Ok(());
+    }
+
+    for entry in &report.entries {
+        match entry {
+            WhyEntry::Skipped { rule_id, symbol } => {
+                writeln!(
+                    out,
+                    "{file}:{symbol}  →  rule `{rule_id}` (skipped: layer-conform-ignore)",
+                    file = report.file,
+                )?;
+            }
+            WhyEntry::Scored { rule_id, symbol, threshold, matches } => {
+                writeln!(out, "{file}:{symbol}  →  rule `{rule_id}`", file = report.file)?;
+                for m in matches {
+                    let verdict = if m.similarity.overall >= *threshold {
+                        "CONFORM"
+                    } else {
+                        "DEVIATION"
+                    };
+                    let color = if verdict == "DEVIATION" { red } else { "" };
+                    writeln!(
+                        out,
+                        "  vs golden {gf}:{gs}  overall={:.3} (threshold {threshold:.2}) → {color}{verdict}{reset}",
+                        m.similarity.overall,
+                        gf = m.golden.file,
+                        gs = m.golden.symbol,
+                    )?;
+                    writeln!(
+                        out,
+                        "    shape={:.3}  calls={:.3}  imports={:.3}  signature={:.3}",
+                        m.similarity.shape,
+                        m.similarity.calls,
+                        m.similarity.imports,
+                        m.similarity.signature,
+                    )?;
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+#[derive(Serialize)]
+struct JsonWhyReport<'a> {
+    version: u32,
+    file: &'a str,
+    entries: Vec<JsonWhyEntry<'a>>,
+}
+
+#[derive(Serialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+enum JsonWhyEntry<'a> {
+    Skipped { rule_id: &'a str, symbol: &'a str },
+    Scored {
+        rule_id: &'a str,
+        symbol: &'a str,
+        threshold: f64,
+        matches: Vec<JsonWhyMatch<'a>>,
+    },
+}
+
+#[derive(Serialize)]
+struct JsonWhyMatch<'a> {
+    golden: JsonGolden<'a>,
+    similarity: JsonSimilarity,
+    verdict: &'static str,
+}
+
+pub fn render_why_json(out: &mut impl Write, report: &WhyReport) -> std::io::Result<()> {
+    let entries: Vec<JsonWhyEntry<'_>> = report
+        .entries
+        .iter()
+        .map(|e| match e {
+            WhyEntry::Skipped { rule_id, symbol } => JsonWhyEntry::Skipped {
+                rule_id,
+                symbol: symbol.as_str(),
+            },
+            WhyEntry::Scored { rule_id, symbol, threshold, matches } => JsonWhyEntry::Scored {
+                rule_id,
+                symbol: symbol.as_str(),
+                threshold: *threshold,
+                matches: matches
+                    .iter()
+                    .map(|m| JsonWhyMatch {
+                        golden: JsonGolden {
+                            file: &m.golden.file,
+                            symbol: &m.golden.symbol,
+                        },
+                        similarity: similarity(&m.similarity),
+                        verdict: if m.similarity.overall >= *threshold {
+                            "CONFORM"
+                        } else {
+                            "DEVIATION"
+                        },
+                    })
+                    .collect(),
+            },
+        })
+        .collect();
+    let json = JsonWhyReport { version: 1, file: &report.file, entries };
+    serde_json::to_writer_pretty(&mut *out, &json).map_err(std::io::Error::other)?;
+    writeln!(out)
 }

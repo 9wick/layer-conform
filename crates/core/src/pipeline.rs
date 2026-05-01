@@ -116,7 +116,10 @@ fn score_against_all(
         .collect()
 }
 
-fn score_pair(actual: &FunctionRef, golden: &FunctionRef, weights: Weights) -> SimilarityScore {
+/// Score two functions on the 4 axes (shape / calls / imports / signature) and
+/// return the aggregated `SimilarityScore`. Pub so command-level explainers
+/// (`why`) can reuse the exact same scoring as `detect_deviations`.
+pub fn score_pair(actual: &FunctionRef, golden: &FunctionRef, weights: Weights) -> SimilarityScore {
     let shape = tsed::tsed(&actual.tree, &golden.tree);
     let calls = jaccard_sorted(&actual.calls, &golden.calls);
     let imports = jaccard_sorted(&actual.imports, &golden.imports);

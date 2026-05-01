@@ -1,7 +1,9 @@
 //! Pure logic core for layer-conform.
 
 pub mod apted;
+pub mod call_origin;
 pub mod deviation;
+pub mod explain;
 pub mod function_ref;
 pub mod ignore_parse;
 pub mod matcher;

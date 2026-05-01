@@ -18,9 +18,13 @@ const TEMPLATE: &str = r#"{
 }
 "#;
 
-pub fn run(force: bool) -> Result<i32> {
+pub struct InitOpts {
+    pub force: bool,
+}
+
+pub fn run(opts: InitOpts) -> Result<i32> {
     let path = Path::new(crate::loader::CONFIG_FILE);
-    if path.exists() && !force {
+    if path.exists() && !opts.force {
         return Err(anyhow!(
             "{} already exists; pass --force to overwrite",
             path.display()
