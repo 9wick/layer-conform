@@ -4,6 +4,8 @@
 [![docs.rs](https://img.shields.io/docsrs/layer-conform-core)](https://docs.rs/layer-conform-core)
 [![license: MIT](https://img.shields.io/crates/l/layer-conform.svg)](./LICENSE)
 
+[English README](./README.md)
+
 コードベースのアーキテクチャレイヤー内における「スタイルの逸脱」を検出するツール。同じレイヤーの他の関数と見た目が異なる関数を見つけ出します。
 
 ## 対応言語
