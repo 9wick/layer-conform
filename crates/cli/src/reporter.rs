@@ -2,8 +2,8 @@
 
 use std::io::Write;
 
-use lc_core::deviation::Deviation;
-use lc_core::explain::{WhyEntry, WhyReport};
+use layer_conform_core::deviation::Deviation;
+use layer_conform_core::explain::{WhyEntry, WhyReport};
 use serde::Serialize;
 
 const ANSI_RESET: &str = "\x1b[0m";
@@ -188,7 +188,7 @@ fn json_deviation(d: &Deviation) -> JsonDeviation<'_> {
     }
 }
 
-fn similarity(s: &lc_core::similarity::SimilarityScore) -> JsonSimilarity {
+fn similarity(s: &layer_conform_core::similarity::SimilarityScore) -> JsonSimilarity {
     JsonSimilarity {
         overall: s.overall,
         shape: s.shape,

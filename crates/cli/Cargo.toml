@@ -1,19 +1,26 @@
 [package]
 name = "layer-conform"
+description = "Detect style deviations within an architectural layer of TS/JS/Rust projects."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "../../README.md"
+keywords = ["lint", "architecture", "ddd", "cli", "similarity"]
+categories = ["command-line-utilities", "development-tools"]
 
 [[bin]]
 name = "layer-conform"
 path = "src/main.rs"
 
 [dependencies]
-lc-core.workspace = true
-lc-io.workspace = true
-lc-ts.workspace = true
-lc-rs.workspace = true
+layer-conform-core.workspace = true
+layer-conform-io.workspace = true
+layer-conform-ts.workspace = true
+layer-conform-rs.workspace = true
 clap.workspace = true
 anyhow.workspace = true
 compact_str.workspace = true
@@ -27,3 +34,6 @@ tempfile.workspace = true
 
 [lints]
 workspace = true
+
+[badges]
+maintenance = { status = "experimental" }

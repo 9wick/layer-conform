@@ -1,6 +1,6 @@
 //! Detect `layer-conform-ignore` directives in a function's leading comments.
 //!
-//! Pure (no I/O, no language deps). The language adapter (`lc-ts`) collects
+//! Pure (no I/O, no language deps). The language adapter (`layer-conform-ts`) collects
 //! the comments preceding a function and feeds them in. The detector decides
 //! whether a directive is present and extracts the optional reason.
 

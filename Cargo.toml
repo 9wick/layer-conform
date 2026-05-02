@@ -1,25 +1,28 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/core",
-    "crates/lc-io",
-    "crates/lc-ts",
-    "crates/lc-rs",
+    "crates/layer-conform-core",
+    "crates/layer-conform-io",
+    "crates/layer-conform-ts",
+    "crates/layer-conform-rs",
     "crates/cli",
 ]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-license = "MIT OR Apache-2.0"
-rust-version = "1.82"
+license = "MIT"
+rust-version = "1.85"
+authors = ["KoheiKido <kido@9wick.com>"]
+repository = "https://github.com/9wick/layer-conform"
+homepage = "https://github.com/9wick/layer-conform"
 
 [workspace.dependencies]
 # Internal crates
-lc-core = { path = "crates/core" }
-lc-io = { path = "crates/lc-io" }
-lc-ts = { path = "crates/lc-ts" }
-lc-rs = { path = "crates/lc-rs" }
+layer-conform-core = { version = "0.1.0", path = "crates/layer-conform-core" }
+layer-conform-io = { version = "0.1.0", path = "crates/layer-conform-io" }
+layer-conform-ts = { version = "0.1.0", path = "crates/layer-conform-ts" }
+layer-conform-rs = { version = "0.1.0", path = "crates/layer-conform-rs" }
 
 # External (exact pin で固定)
 oxc_parser = "=0.73.0"

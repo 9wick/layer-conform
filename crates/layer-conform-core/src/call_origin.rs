@@ -3,8 +3,8 @@
 //! Layer-conform's similarity model treats two calls as equivalent when they
 //! cross the *same kind of boundary*, even if their concrete callee names
 //! differ. This module owns the boundary vocabulary and the path arithmetic
-//! that produces the relative-layer signature; language adapters (`lc-rs`,
-//! `lc-ts`) are responsible only for resolving each call to a (package, dir)
+//! that produces the relative-layer signature; language adapters (`layer-conform-rs`,
+//! `layer-conform-ts`) are responsible only for resolving each call to a (package, dir)
 //! pair and then asking this module to encode it.
 //!
 //! The signature is **truncated at the first divergent folder** when going
@@ -216,8 +216,8 @@ mod tests {
 
     #[test]
     fn encode_other_package() {
-        let s = CallOrigin::OtherPackage { package: "lc_core".into() }.encode();
-        assert_eq!(s.as_str(), "_PKG:lc_core");
+        let s = CallOrigin::OtherPackage { package: "layer_conform_core".into() }.encode();
+        assert_eq!(s.as_str(), "_PKG:layer_conform_core");
     }
 
     #[test]

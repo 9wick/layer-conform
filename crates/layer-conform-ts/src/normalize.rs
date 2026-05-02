@@ -1,7 +1,7 @@
-//! Convert oxc AST nodes into the neutral `lc_core::tree::TreeNode` IR.
+//! Convert oxc AST nodes into the neutral `layer_conform_core::tree::TreeNode` IR.
 
 use compact_str::CompactString;
-use lc_core::tree::{NodeKind, TreeNode};
+use layer_conform_core::tree::{NodeKind, TreeNode};
 use oxc_ast::ast::{Expression, Statement};
 
 const ANON_IDENT: &str = "_IDENT";

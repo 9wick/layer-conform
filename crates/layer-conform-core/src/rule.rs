@@ -1,6 +1,6 @@
 //! Compiled rule used by the matcher and pipeline.
 //!
-//! Constructed by `lc-io::config` from JSON. `lc-core` keeps no I/O,
+//! Constructed by `layer-conform-io::config` from JSON. `layer-conform-core` keeps no I/O,
 //! so this type only knows about already-compiled glob sets.
 
 use std::path::Path;

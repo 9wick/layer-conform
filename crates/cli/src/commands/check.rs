@@ -9,7 +9,7 @@ use std::io::stdout;
 use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
-use lc_core::pipeline;
+use layer_conform_core::pipeline;
 
 use crate::loader;
 use crate::reporter;
@@ -47,7 +47,7 @@ pub fn run(opts: CheckOpts) -> Result<i32> {
 fn resolve_focus_file(
     explain: &Option<PathBuf>,
     root: &std::path::Path,
-    files: &lc_core::pipeline::ExtractedFiles,
+    files: &layer_conform_core::pipeline::ExtractedFiles,
 ) -> Result<Option<String>> {
     let Some(explain_path) = explain else { return Ok(None) };
     let key = loader::relativize(root, explain_path);

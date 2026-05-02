@@ -1,13 +1,13 @@
 //! TypeScript / JavaScript adapter for layer-conform.
 //!
-//! Wraps `oxc_parser` and converts oxc AST into the neutral `lc_core::TreeNode` IR.
+//! Wraps `oxc_parser` and converts oxc AST into the neutral `layer_conform_core::TreeNode` IR.
 
 mod extract;
 mod normalize;
 mod oxc_compat;
 mod signature;
 
-use lc_core::FunctionRef;
+use layer_conform_core::FunctionRef;
 
 /// Parse a TS/JS source string and return all extractable functions.
 /// Returns top-level `FunctionDeclarations` and class methods.

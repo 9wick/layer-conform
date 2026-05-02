@@ -1,8 +1,8 @@
-//! Translate the parsed `Config` into runtime `lc_core::Rule`s with
+//! Translate the parsed `Config` into runtime `layer_conform_core::Rule`s with
 //! pre-compiled `GlobSet`s. Done once per CLI invocation.
 
 use globset::{Glob, GlobSet, GlobSetBuilder};
-use lc_core::rule::{GoldenSelector, Rule};
+use layer_conform_core::rule::{GoldenSelector, Rule};
 
 use crate::config::Config;
 

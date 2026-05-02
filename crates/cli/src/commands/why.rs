@@ -8,7 +8,7 @@ use std::io::stdout;
 use std::path::PathBuf;
 
 use anyhow::Result;
-use lc_core::explain;
+use layer_conform_core::explain;
 
 use crate::loader;
 use crate::reporter;

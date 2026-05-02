@@ -5,8 +5,8 @@
 //! place — which is also the only place that knows how to walk source bytes.
 
 use compact_str::CompactString;
-use lc_core::ignore_parse::{CommentKind as IgKind, CommentToken};
-use lc_core::{FunctionKind, FunctionRef, Signature};
+use layer_conform_core::ignore_parse::{CommentKind as IgKind, CommentToken};
+use layer_conform_core::{FunctionKind, FunctionRef, Signature};
 use oxc_ast::ast::{
     BindingPatternKind, Class, ClassElement, Expression, ExportDefaultDeclarationKind,
     MethodDefinitionKind, ObjectExpression, ObjectPropertyKind, PropertyKey, Statement,
@@ -101,7 +101,7 @@ impl Builder<'_> {
         let ast_hash = tree.canonical_hash();
         let start_line = byte_to_line(self.source, span_start);
         let end_line = byte_to_line(self.source, span_end);
-        let ignore = lc_core::ignore_parse::parse_directive(&self.comments, start_line);
+        let ignore = layer_conform_core::ignore_parse::parse_directive(&self.comments, start_line);
         FunctionRef {
             symbol,
             kind,

@@ -7,9 +7,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
-use lc_core::pipeline::ExtractedFiles;
-use lc_core::rule::Rule;
-use lc_io::config::{self, Config};
+use layer_conform_core::pipeline::ExtractedFiles;
+use layer_conform_core::rule::Rule;
+use layer_conform_io::config::{self, Config};
 
 pub const CONFIG_FILE: &str = ".layer-conform.json";
 
@@ -19,7 +19,7 @@ pub fn load_config() -> Result<Config> {
 }
 
 pub fn compile_rules(cfg: &Config) -> Result<Vec<Rule>> {
-    lc_io::compile::compile_rules(cfg).with_context(|| "compiling rules")
+    layer_conform_io::compile::compile_rules(cfg).with_context(|| "compiling rules")
 }
 
 /// Walk source files under `root` (default cwd), parse each, build an
@@ -28,7 +28,7 @@ pub fn compile_rules(cfg: &Config) -> Result<Vec<Rule>> {
 /// `restrict_to` filters the walk: when non-empty, only those files are parsed.
 pub fn extract_workspace(root: &Path, restrict_to: &[PathBuf]) -> Result<ExtractedFiles> {
     let files = if restrict_to.is_empty() {
-        lc_io::walker::walk_source_files(root)
+        layer_conform_io::walker::walk_source_files(root)
     } else {
         restrict_to
             .iter()
@@ -39,7 +39,7 @@ pub fn extract_workspace(root: &Path, restrict_to: &[PathBuf]) -> Result<Extract
     // Discover the Rust workspace once so each .rs file gets the same
     // resolution context (use map → relative-layer signatures). When no
     // Cargo.toml lives at `root` we fall back to name-only encoding.
-    let rs_workspace = lc_rs::workspace::discover_workspace(root)
+    let rs_workspace = layer_conform_rs::workspace::discover_workspace(root)
         .with_context(|| "discovering Rust workspace")?;
 
     let mut out: ExtractedFiles = HashMap::with_capacity(files.len());
@@ -53,13 +53,13 @@ pub fn extract_workspace(root: &Path, restrict_to: &[PathBuf]) -> Result<Extract
             .with_context(|| format!("reading {}", path.display()))?;
         let funcs = match path.extension().and_then(|s| s.to_str()) {
             Some("rs") => match &rs_workspace {
-                Some(ws) => lc_rs::parse_file_with_context(
+                Some(ws) => layer_conform_rs::parse_file_with_context(
                     &source,
-                    &lc_rs::FileContext { workspace: ws, file_path: &path },
+                    &layer_conform_rs::FileContext { workspace: ws, file_path: &path },
                 ),
-                None => lc_rs::parse_file(&source),
+                None => layer_conform_rs::parse_file(&source),
             },
-            _ => lc_ts::parse_file(&source),
+            _ => layer_conform_ts::parse_file(&source),
         };
         out.insert(key, funcs);
     }
