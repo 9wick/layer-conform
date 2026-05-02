@@ -1,0 +1,26 @@
+[workspace]
+# 各 crate に CHANGELOG.md を生成・更新
+changelog_update = true
+# GitHub Release も作成
+git_release_enable = true
+
+# 全 crate を同じバージョンで揃える（version_group 機能）
+[[package]]
+name = "layer-conform-core"
+version_group = "layer-conform"
+
+[[package]]
+name = "layer-conform-io"
+version_group = "layer-conform"
+
+[[package]]
+name = "layer-conform-ts"
+version_group = "layer-conform"
+
+[[package]]
+name = "layer-conform-rs"
+version_group = "layer-conform"
+
+[[package]]
+name = "layer-conform"
+version_group = "layer-conform"
