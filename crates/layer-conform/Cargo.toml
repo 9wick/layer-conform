@@ -8,7 +8,7 @@ rust-version.workspace = true
 authors.workspace = true
 repository.workspace = true
 homepage.workspace = true
-readme = "../../README.md"
+readme = "README.md"
 keywords = ["lint", "architecture", "ddd", "cli", "similarity"]
 categories = ["command-line-utilities", "development-tools"]
 
