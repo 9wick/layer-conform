@@ -406,7 +406,7 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
 name = "layer-conform"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -424,7 +424,7 @@ dependencies = [
 
 [[package]]
 name = "layer-conform-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "blake3",
  "compact_str 0.8.1",
@@ -435,7 +435,7 @@ dependencies = [
 
 [[package]]
 name = "layer-conform-io"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "compact_str 0.8.1",
  "globset",
@@ -450,7 +450,7 @@ dependencies = [
 
 [[package]]
 name = "layer-conform-rs"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "compact_str 0.8.1",
  "layer-conform-core",
@@ -463,7 +463,7 @@ dependencies = [
 
 [[package]]
 name = "layer-conform-ts"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "compact_str 0.8.1",
  "layer-conform-core",
