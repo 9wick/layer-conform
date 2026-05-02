@@ -9,7 +9,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 rust-version = "1.85"
@@ -19,10 +19,10 @@ homepage = "https://github.com/9wick/layer-conform"
 
 [workspace.dependencies]
 # Internal crates
-layer-conform-core = { version = "0.1.0", path = "crates/layer-conform-core" }
-layer-conform-io = { version = "0.1.0", path = "crates/layer-conform-io" }
-layer-conform-ts = { version = "0.1.0", path = "crates/layer-conform-ts" }
-layer-conform-rs = { version = "0.1.0", path = "crates/layer-conform-rs" }
+layer-conform-core = { version = "0.1.1", path = "crates/layer-conform-core" }
+layer-conform-io = { version = "0.1.1", path = "crates/layer-conform-io" }
+layer-conform-ts = { version = "0.1.1", path = "crates/layer-conform-ts" }
+layer-conform-rs = { version = "0.1.1", path = "crates/layer-conform-rs" }
 
 # External (exact pin で固定)
 oxc_parser = "=0.73.0"
