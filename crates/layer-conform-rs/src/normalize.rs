@@ -1,12 +1,12 @@
-//! Convert syn AST nodes into the neutral `lc_core::tree::TreeNode` IR.
+//! Convert syn AST nodes into the neutral `layer_conform_core::tree::TreeNode` IR.
 //!
 //! The optional [`ImportClassifier`] re-encodes call/method/macro identifiers
-//! as `_LAYER:../`, `_PKG:lc_core`, `_STDLIB`, etc. so that two functions
+//! as `_LAYER:../`, `_PKG:layer_conform_core`, `_STDLIB`, etc. so that two functions
 //! that delegate across the same boundary get identical leaf values even
 //! when their concrete callee names differ.
 
 use compact_str::CompactString;
-use lc_core::tree::{NodeKind, TreeNode};
+use layer_conform_core::tree::{NodeKind, TreeNode};
 use syn::{Block, Expr, Member, Path, Stmt};
 
 use crate::resolver::ImportClassifier;
@@ -129,7 +129,7 @@ fn normalize_path(path: &Path, c: &ImportClassifier<'_>) -> TreeNode {
         return TreeNode::leaf(NodeKind::Identifier, Some(value));
     }
     // Disabled (no workspace) mode: preserve raw structure for backwards
-    // compatibility with lc-rs unit tests.
+    // compatibility with layer-conform-rs unit tests.
     if path.segments.len() == 1 {
         let name = path.segments[0].ident.to_string();
         return TreeNode::leaf(NodeKind::Identifier, Some(CompactString::from(name)));

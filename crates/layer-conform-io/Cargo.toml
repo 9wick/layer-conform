@@ -1,0 +1,36 @@
+[package]
+name = "layer-conform-io"
+description = "Configuration parsing and file walking for layer-conform."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+keywords = ["lint", "config", "cli", "architecture"]
+categories = ["development-tools", "parser-implementations"]
+exclude = ["tests/fixtures/**"]
+
+[dependencies]
+layer-conform-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+compact_str.workspace = true
+globset.workspace = true
+ignore.workspace = true
+walkdir.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[badges]
+maintenance = { status = "experimental" }

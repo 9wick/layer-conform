@@ -1,5 +1,5 @@
 //! Resolve each call/macro/method site in a Rust source file to a
-//! [`CallOrigin`](lc_core::call_origin::CallOrigin).
+//! [`CallOrigin`](layer_conform_core::call_origin::CallOrigin).
 //!
 //! For one source file we
 //! 1. parse every `use` statement into a leaf-name → resolved-path map,
@@ -10,7 +10,7 @@
 //! 3. classify method calls (`x.method()`) as `UnresolvedMethod` (we don't
 //!    do type inference) and macros (`println!`) by their root segment.
 //!
-//! When called without a [`Workspace`] (e.g. in lc-rs unit tests) the
+//! When called without a [`Workspace`] (e.g. in layer-conform-rs unit tests) the
 //! classifier falls back to **raw name** encoding so existing tests that
 //! assert on identifier values keep working.
 
@@ -18,7 +18,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use compact_str::CompactString;
-use lc_core::call_origin::{intra_package_origin, CallOrigin};
+use layer_conform_core::call_origin::{intra_package_origin, CallOrigin};
 use syn::{File, Item, Path as SynPath, UseTree};
 
 use crate::workspace::{FileLocation, MemberInfo, UseRoot, Workspace};
@@ -55,7 +55,7 @@ pub struct ImportClassifier<'a> {
 impl<'a> ImportClassifier<'a> {
     /// Build a classifier with no resolution; every callee is encoded by
     /// its raw name (current behaviour). Used when no workspace context is
-    /// available, e.g. in `lc-rs` unit tests.
+    /// available, e.g. in `layer-conform-rs` unit tests.
     pub fn empty() -> Self {
         Self { workspace: None, location: None, use_map: HashMap::new() }
     }
@@ -394,7 +394,7 @@ mod tests {
         write(
             dir.path(),
             "crates/core/Cargo.toml",
-            "[package]\nname = \"lc-core\"\n",
+            "[package]\nname = \"layer-conform-core\"\n",
         );
         write(dir.path(), "crates/core/src/lib.rs", "");
         write(
@@ -402,15 +402,15 @@ mod tests {
             "crates/cli/Cargo.toml",
             "[package]\nname = \"cli\"\n[dependencies]\nlc-core = { path = \"../core\" }\n",
         );
-        write(dir.path(), "crates/cli/src/main.rs", "use lc_core::pipeline;\nfn run() {}");
+        write(dir.path(), "crates/cli/src/main.rs", "use layer_conform_core::pipeline;\nfn run() {}");
         let (ws, file_path, parsed) = build_classifier_for(
             dir.path(),
             "crates/cli/src/main.rs",
-            "use lc_core::pipeline;\nfn run() {}",
+            "use layer_conform_core::pipeline;\nfn run() {}",
         );
         let c = ImportClassifier::build(&ws, &file_path, &parsed);
         let path: SynPath = syn::parse_str("pipeline::detect_deviations").unwrap();
-        assert_eq!(c.classify_call(&path).as_str(), "_PKG:lc_core");
+        assert_eq!(c.classify_call(&path).as_str(), "_PKG:layer_conform_core");
     }
 
     #[test]

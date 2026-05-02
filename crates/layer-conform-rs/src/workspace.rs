@@ -1,7 +1,7 @@
 //! Discover the Rust workspace layout from `Cargo.toml` files.
 //!
-//! The classifier needs to know, for any callee path like `lc_core::pipeline`,
-//! whether `lc_core` is:
+//! The classifier needs to know, for any callee path like `layer_conform_core::pipeline`,
+//! whether `layer_conform_core` is:
 //! 1. another member of this workspace (→ `OtherPackage`)
 //! 2. a third-party dependency (→ `ExternalPackage`)
 //! 3. the standard library (`std` / `core` / `alloc`).
@@ -32,9 +32,9 @@ pub struct Workspace {
 
 #[derive(Debug, Clone)]
 pub struct MemberInfo {
-    /// Display name (with `-`, e.g. "lc-rs"). Use `crate_name` for matching.
+    /// Display name (with `-`, e.g. "layer-conform-rs"). Use `crate_name` for matching.
     pub name: String,
-    /// Underscore-normalized name used in `use` paths (e.g. "lc_rs").
+    /// Underscore-normalized name used in `use` paths (e.g. "layer_conform_rs").
     pub crate_name: String,
     /// Absolute path to the member directory (containing the member Cargo.toml).
     pub package_dir: PathBuf,
@@ -60,7 +60,7 @@ impl Workspace {
         if STDLIB_CRATES.contains(&root_seg) {
             return UseRoot::Stdlib;
         }
-        // Both forms accepted: `lc-core` and `lc_core`.
+        // Both forms accepted: `layer-conform-core` and `layer_conform_core`.
         let normalized = root_seg.replace('-', "_");
         if let Some(m) = self.members.values().find(|m| m.crate_name == normalized) {
             return UseRoot::Member(m);
@@ -159,7 +159,7 @@ pub fn discover_workspace(root: &Path) -> Result<Option<Workspace>, WorkspaceErr
 
     for member_glob in &member_globs {
         // We don't expand globs (yet) — most workspaces list explicit dirs.
-        // Wildcards would require globset which is outside lc-rs's scope.
+        // Wildcards would require globset which is outside layer-conform-rs's scope.
         let member_dir = root.join(member_glob);
         if !member_dir.is_dir() {
             continue;

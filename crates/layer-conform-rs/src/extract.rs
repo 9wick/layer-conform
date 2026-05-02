@@ -3,12 +3,12 @@
 //! Optionally takes a [`FileContext`] (caller path + workspace) so that call
 //! sites can be classified by relative-layer signature instead of literal
 //! callee name. Without a context every callee falls back to its raw name —
-//! this preserves the lc-rs unit tests' expectations.
+//! this preserves the layer-conform-rs unit tests' expectations.
 
 use std::path::Path;
 
 use compact_str::CompactString;
-use lc_core::{FunctionKind, FunctionRef, Signature};
+use layer_conform_core::{FunctionKind, FunctionRef, Signature};
 use syn::{ImplItem, ImplItemFn, Item, ItemFn, ItemImpl};
 
 use crate::resolver::ImportClassifier;

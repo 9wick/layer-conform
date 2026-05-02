@@ -5,6 +5,8 @@
 - 起源: `plans/initial-plan.md` を design として整理したもの
 - 次のステップ: writing-plans skill で実装プランを生成する
 
+> **注記** (2026-05-02 追記): 本ドキュメント執筆時点では crate を `lc-core` / `lc-io` / `lc-ts` / `lc-rs` と命名していたが、その後 crates.io publish 準備に伴い `layer-conform-core` / `layer-conform-io` / `layer-conform-ts` / `layer-conform-rs` にリネームした。本文中のコード参照は当時の名前のまま残している。
+
 ---
 
 ## 1. ゴールと非ゴール

@@ -1,9 +1,9 @@
 //! Extract calls / imports from `syn::File` and `syn::Block`.
 //!
 //! Calls go through the optional [`ImportClassifier`]: in workspace-aware
-//! mode each entry is encoded as `_LAYER:..`, `_PKG:lc_core`, `_STDLIB`,
+//! mode each entry is encoded as `_LAYER:..`, `_PKG:layer_conform_core`, `_STDLIB`,
 //! etc.; without a workspace we fall back to the raw dotted name so the
-//! lc-rs unit tests keep passing.
+//! layer-conform-rs unit tests keep passing.
 
 use compact_str::CompactString;
 use syn::{Block, Expr, File, Item, Path, Stmt, UseTree};

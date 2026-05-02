@@ -2,7 +2,13 @@
 
 Detect "style deviations" within a layer of a TypeScript/JavaScript project — i.e. find functions that look different from the rest of their layer.
 
-## Build
+## Install
+
+```sh
+cargo install --locked layer-conform
+```
+
+## Build from source
 
 ```sh
 cargo build --release
@@ -86,8 +92,8 @@ Multi-golden picks the highest-scoring golden per function:
 
 ## Status
 
-- ✅ Phase 1a: lc-core (APTED + TSED + 4-axis similarity)
-- ✅ Phase 1b: lc-ts (FunctionDeclaration only) + CLI 1-pair compare
+- ✅ Phase 1a: layer-conform-core (APTED + TSED + 4-axis similarity)
+- ✅ Phase 1b: layer-conform-ts (FunctionDeclaration only) + CLI 1-pair compare
 - ✅ Phase 2: config-driven check, all 6 function kinds, multi-golden,
   `layer-conform-ignore` directive, `--explain` / `why`, `init`,
   `--threshold` / `--no-color` / `--json`

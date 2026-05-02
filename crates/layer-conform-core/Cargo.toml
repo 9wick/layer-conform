@@ -1,0 +1,30 @@
+[package]
+name = "layer-conform-core"
+description = "Core engine for layer-conform: AST IR, APTED/TSED similarity, rule evaluation."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+keywords = ["lint", "ast", "similarity", "architecture", "ddd"]
+categories = ["development-tools", "parser-implementations"]
+exclude = ["tests/fixtures/**"]
+
+[dependencies]
+compact_str.workspace = true
+smallvec.workspace = true
+blake3.workspace = true
+thiserror.workspace = true
+globset.workspace = true
+
+[lints]
+workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[badges]
+maintenance = { status = "experimental" }
