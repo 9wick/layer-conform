@@ -1,7 +1,7 @@
 # layer-conform
 
 [![crates.io](https://img.shields.io/crates/v/layer-conform.svg)](https://crates.io/crates/layer-conform)
-[![docs.rs](https://img.shields.io/docsrs/layer-conform-core)](https://docs.rs/layer-conform-core)
+[![docs.rs](https://img.shields.io/docsrs/layer-conform)](https://docs.rs/layer-conform)
 [![license: MIT](https://img.shields.io/crates/l/layer-conform.svg)](./LICENSE)
 
 [English README](./README.md)
